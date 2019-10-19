@@ -1,5 +1,6 @@
 import telebot
 import psycopg2
+import re
 
 bot = telebot.TeleBot('923254931:AAE-jtEP5nZv8WhLUL5PBPy-TTkRG9Ew4V0')
 conn = psycopg2.connect(dbname='d9gqs0c8qluemb', user='rfyglxtwtqlzun',
@@ -26,27 +27,30 @@ def get_text_messages(message):
 def get_number(message):
     global number
     number = '%' + message.text + '%'
+    number = re.sub(r'-|\(|\)|\s', '', number)
     print(number)
-    cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" WHERE order_number LIKE %s;",
-                   (number,))
+    cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" WHERE order_number "
+                   "LIKE %s;", (number,))
     mobile_records = cursor.fetchall()
-    prnumber = ''
-    pragent = ''
-    prname = ''
-    for row in mobile_records:
-        print("Id = ", row[0], )
-        print("Model = ", row[1])
-        print("Price  = ", row[2], "\n")
-        prnumber = "Номер = " + row[0]
-        pragent = "Агенство = " + row[1]
-        prname = "Агент = " + row[2]
-    if mobile_records is not None:
-        bot.send_message(message.from_user.id, prnumber)
-        bot.send_message(message.from_user.id, pragent)
-        bot.send_message(message.from_user.id, prname)
+    if mobile_records:
+        for row in mobile_records:
+            prname = ''
+            pragent = ''
+            prnumber = str(row[0])
+            if row[1] != "None":
+                pragent = " " + row[1]
+                odds = 100
+            else:
+                if row[2] != "None":
+                    prname = " " + row[2]
+                odds = 50
+            if row[2] != "None":
+                prname = " " + row[2]
+            message_text = "Найден " + str(odds) + " % агент" + prname + " из агентства'" + pragent + "' с номером " \
+                           + prnumber
+            bot.send_message(message.from_user.id, message_text)
+
     else:
         bot.send_message(message.from_user.id, "Номер не найден")
 
 bot.polling(none_stop=True, interval=0)
-
-
