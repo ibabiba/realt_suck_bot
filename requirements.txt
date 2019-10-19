@@ -1,2 +1,3 @@
 psycopg2
 telebot
+PyTelegramBotAPI==2.2.3
