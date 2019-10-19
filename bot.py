@@ -46,7 +46,7 @@ def get_number(message):
                 odds = 50
             if row[2] != "None":
                 prname = " " + row[2]
-            message_text = "Найден " + str(odds) + " % агент" + prname + " из агентства'" + pragent + "' с номером " \
+            message_text = "Найден " + str(odds) + " % агент" + prname + pragent + " с номером " \
                            + prnumber
             bot.send_message(message.from_user.id, message_text)
 
