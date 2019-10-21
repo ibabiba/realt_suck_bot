@@ -9,20 +9,33 @@ conn = psycopg2.connect(dbname='d9gqs0c8qluemb', user='rfyglxtwtqlzun',
 cursor = conn.cursor()
 number = ''
 
+
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     if message.text == "/start":
         bot.send_message(message.from_user.id, 'Привет, я бот, который проверяет агента по номеру телефона.\n' +
                                                'Для того, чтобы узнать агент это или нет, введи /number')
+        userfind = "Новый пользователь: " + str(message.from_user)
+        bot.send_message(chat_id=320143245, text=userfind)
     elif message.text == "/help":
         bot.send_message(message.from_user.id, "Напиши /number для проверки номера телефона в базе агентов")
     elif message.text == "/number":
         bot.send_message(message.from_user.id, "Введи номер:")
         bot.register_next_step_handler(message, get_number)
+    # elif message.text == "/realty":
+    #    bot.send_message(message.from_user.id, "Снять или Купить?")
+    #    bot.register_next_step_handler(message, get_number)
+    elif message.text == "/rent":
+        bot.send_message(message.from_user.id, "Введи Область:")
+        bot.register_next_step_handler(message, get_number)
+
     # else:
     #   bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
 
+
 def get_number(message):
+    userfind = "Пользователь: " + str(message.from_user) + " Ищет " + message.text
+    bot.send_message(chat_id=320143245, text=userfind)
     global number
     number = '%' + message.text + '%'
     number = re.sub(r'-|\(|\)|\s', '', number)
@@ -34,12 +47,10 @@ def get_number(message):
         if mobile_records:
             for row in mobile_records:
                 prname = ''
-                pragent = ''
                 prnumber = str(row[0])
 
                 if row[1] != "None":
                     pragent = " " + row[1]
-                    odds = 100
                     message_text = pragent + " с номером " + prnumber
 
                 else:
@@ -57,6 +68,7 @@ def get_number(message):
 
     else:
         bot.send_message(message.from_user.id, "Введите минимум 7 цифр")
-        bot.register_next_step_handler(message, get_number);
+        bot.register_next_step_handler(message, get_number)
+
 
 bot.polling(none_stop=True, interval=0)
