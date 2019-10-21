@@ -48,7 +48,7 @@ def get_number(message):
                 message_text = "Найден " + str(odds) + " % агент" + prname + pragent + " с номером " \
                                + prnumber
                 bot.send_message(message.from_user.id, message_text)
-
+                break
         else:
             bot.send_message(message.from_user.id, "Номер не найден")
         bot.register_next_step_handler(message, get_number)
