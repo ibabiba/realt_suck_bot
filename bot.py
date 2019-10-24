@@ -9,12 +9,11 @@ conn = psycopg2.connect(dbname='d9gqs0c8qluemb', user='rfyglxtwtqlzun',
 cursor = conn.cursor()
 number = ''
 
-
-@bot.message_handler(content_types=['text'])
-def get_text_messages(message):
+@bot.message_handler(commands=['start', 'help', 'number'])
+def handle_start_help(message):
     if message.text == "/start":
         bot.send_message(message.from_user.id, 'Привет, я бот, который проверяет агента по номеру телефона.\n' +
-                                               'Для того, чтобы узнать агент это или нет, введи /number')
+                         'Для того, чтобы узнать агент это или нет, введи /number')
         userfind = "Новый пользователь: " + str(message.from_user)
         bot.send_message(chat_id=320143245, text=userfind)
     elif message.text == "/help":
@@ -22,13 +21,14 @@ def get_text_messages(message):
     elif message.text == "/number":
         bot.send_message(message.from_user.id, "Введи номер:")
         bot.register_next_step_handler(message, get_number)
+#@bot.message_handler(content_types=['text'])
+#def get_text_messages(message):
     # elif message.text == "/realty":
     #    bot.send_message(message.from_user.id, "Снять или Купить?")
     #    bot.register_next_step_handler(message, get_number)
-    elif message.text == "/rent":
-        bot.send_message(message.from_user.id, "Введи Область:")
-        bot.register_next_step_handler(message, get_number)
-
+    # if message.text == "/rent":
+    #    bot.send_message(message.from_user.id, "Введи Область:")
+    #    bot.register_next_step_handler(message, get_number)
     # else:
     #   bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
 
