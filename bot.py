@@ -39,9 +39,8 @@ def get_number(message):
     global number
     number = '%' + message.text + '%'
     number = re.sub(r'-|\(|\)|\s', '', number)
-    if message.text != "/number" or message.text != "/help" or message.text != "/start":
+    if message.text != "/number" and message.text != "/help" and message.text != "/start":
         if len(number) > 6:
-            print(number)
             cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" WHERE order_number "
                            "LIKE %s;", (number,))
             mobile_records = cursor.fetchall()
