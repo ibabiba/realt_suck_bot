@@ -41,8 +41,8 @@ def get_number(message):
     number = re.sub(r'-|\(|\)|\s', '', number)
     if message.text != "/number" and message.text != "/help" and message.text != "/start":
         if len(number) > 6:
-            cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" WHERE order_number "
-                           "LIKE %s;", (number,))
+            cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" "
+                           "WHERE order_number LIKE %s;", (number,))
             mobile_records = cursor.fetchall()
             if mobile_records:
                 for row in mobile_records:
@@ -51,7 +51,7 @@ def get_number(message):
 
                     if row[1] != "None":
                         pragent = " " + row[1]
-                        message_text = pragent + " с номером " + prnumber
+                        message_text = pragent
 
                     else:
                         if row[2] != "None":
@@ -59,9 +59,10 @@ def get_number(message):
                         odds = 50
                         if row[2] != "None":
                             prname = " " + row[2]
-                        message_text = "Агент" + prname + " с номером " + prnumber + " с вероятностью " + str(odds) + " %"
+                        message_text = "Агент" + prname + " с номером " + prnumber + " с вероятностью " + \
+                                       str(odds) + " %"
                     bot.send_message(message.from_user.id, message_text)
-                    break
+                bot.register_next_step_handler(message, get_number)
             else:
                 bot.send_message(message.from_user.id, "Номер не найден")
                 bot.register_next_step_handler(message, get_number)
