@@ -39,37 +39,37 @@ def get_number(message):
     global number
     number = '%' + message.text + '%'
     number = re.sub(r'-|\(|\)|\s', '', number)
-    if len(number) > 6:
-        print(number)
-        cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" WHERE order_number "
-                       "LIKE %s;", (number,))
-        mobile_records = cursor.fetchall()
-        if mobile_records:
-            for row in mobile_records:
-                prname = ''
-                prnumber = str(row[0])
+    if message.text != "/number" or message.text != "/help" or message.text != "/start":
+        if len(number) > 6:
+            print(number)
+            cursor.execute("SELECT order_number, order_who, order_number_name FROM public.\"Agents\" WHERE order_number "
+                           "LIKE %s;", (number,))
+            mobile_records = cursor.fetchall()
+            if mobile_records:
+                for row in mobile_records:
+                    prname = ''
+                    prnumber = str(row[0])
 
-                if row[1] != "None":
-                    pragent = " " + row[1]
-                    message_text = pragent + " с номером " + prnumber
+                    if row[1] != "None":
+                        pragent = " " + row[1]
+                        message_text = pragent + " с номером " + prnumber
 
-                else:
-                    if row[2] != "None":
-                        prname = " " + row[2]
-                    odds = 50
-                    if row[2] != "None":
-                        prname = " " + row[2]
-                    message_text = "Агент" + prname + " с номером " + prnumber + " с вероятностью " + str(odds) + " %"
-                bot.send_message(message.from_user.id, message_text)
-                break
+                    else:
+                        if row[2] != "None":
+                            prname = " " + row[2]
+                        odds = 50
+                        if row[2] != "None":
+                            prname = " " + row[2]
+                        message_text = "Агент" + prname + " с номером " + prnumber + " с вероятностью " + str(odds) + " %"
+                    bot.send_message(message.from_user.id, message_text)
+                    break
+            else:
+                bot.send_message(message.from_user.id, "Номер не найден")
+                bot.register_next_step_handler(message, get_number)
+
         else:
-            bot.send_message(message.from_user.id, "Номер не найден")
-        if message.text != "/number" or message.text != "/help" or message.text != "/start":
+            bot.send_message(message.from_user.id, "Введите минимум 7 цифр")
             bot.register_next_step_handler(message, get_number)
-
-    else:
-        bot.send_message(message.from_user.id, "Введите минимум 7 цифр")
-        bot.register_next_step_handler(message, get_number)
 
 
 bot.polling(none_stop=True, interval=0)
