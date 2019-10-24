@@ -64,7 +64,8 @@ def get_number(message):
                 break
         else:
             bot.send_message(message.from_user.id, "Номер не найден")
-        bot.register_next_step_handler(message, get_number)
+        if message.text != "/number":
+            bot.register_next_step_handler(message, get_number)
 
     else:
         bot.send_message(message.from_user.id, "Введите минимум 7 цифр")
