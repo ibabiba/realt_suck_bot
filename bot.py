@@ -1,6 +1,7 @@
 import telebot
 import psycopg2
 import re
+import datetime
 
 bot = telebot.TeleBot('923254931:AAE-jtEP5nZv8WhLUL5PBPy-TTkRG9Ew4V0')
 conn = psycopg2.connect(dbname='d9gqs0c8qluemb', user='rfyglxtwtqlzun',
@@ -17,7 +18,7 @@ for region in regions:
     print(region[1])
 
 
-@bot.message_handler(commands=['start', 'help', 'number', 'realty'])
+@bot.message_handler(commands=['start', 'help', 'number', 'realty', 'getitem'])
 def handle_start_help(message):
     if message.text == "/start":
         bot.send_message(message.from_user.id, 'Привет, я бот, который проверяет агента по номеру телефона.\n' +
@@ -42,6 +43,25 @@ def handle_start_help(message):
         key_3 = telebot.types.InlineKeyboardButton(text='Отписаться', callback_data='Отписаться')
         keyboard1.add(key_3)
         bot.send_message(message.from_user.id, "Снять или Купить?", reply_markup=keyboard1)
+
+    elif message.text == "/getitem":
+        bot.send_message(message.from_user.id, 'Тестовый режим: \n' +
+                         'Обьявления за сегодня:')
+        get_items(message)
+
+
+def get_items(message):
+    id = str(message.from_user.id)
+    cursor.execute("SELECT * from public.\"botusers\" WHERE userid = %s;", (id,))
+    rows = cursor.fetchall()
+    date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d ')
+    print(rows)
+    if rows:
+        cursor.execute("SELECT * FROM public.\"apartaments\" WHERE order_update = %s;", (date, ))
+        items = cursor.fetchall()
+        for item in items:
+            print(item)
+            bot.send_message(message.from_user.id, item[2])
 
 
 @bot.callback_query_handler(func=lambda call: True)
